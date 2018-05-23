@@ -28,7 +28,8 @@ class BatchCreateMixin:
 
         return Response(created_data, status=status.HTTP_201_CREATED)
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request: Request, *args, **kwargs) -> Response:
+        """Override to handle `batch` requests."""
         if 'batch' in request.data and isinstance(request.data['batch'], list):
             return self.batch_create(request.data['batch'])
 
