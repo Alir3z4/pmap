@@ -6,8 +6,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.test import APITestCase
 
-from api.serializers import AnimalSerializer
-from livestock.models import Animal, AnimalWeight
+from api.serializers import AnimalSerializer, HerdSerializer
+from livestock.models import Animal, AnimalWeight, Herd
 
 
 class TestAPIViews(APITestCase):
@@ -49,3 +49,20 @@ class TestAPIViews(APITestCase):
         self.assertIsInstance(resp.data, list)
         self.assertEqual(len(resp.data), 1)
         self.assertEqual(resp.data[0], AnimalSerializer(instance=animal).data)
+
+    def test_add_herd(self) -> None:
+        resp: Response = self.client.post(path=reverse('api:herd-list'), data={'name': 'meat lovers'})
+
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Herd.objects.filter().count(), 1)
+
+    def test_her_list(self) -> None:
+        herd: Herd = Herd.objects.create(name='meat lovers')
+        herd.animal_set.create(id=2)
+
+        resp: Response = self.client.get(path=reverse('api:herd-list'))
+
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertIsInstance(resp.data, list)
+        self.assertEqual(len(resp.data), 1)
+        self.assertEqual(resp.data[0], HerdSerializer(instance=herd).data)

@@ -23,7 +23,7 @@ class AnimalSerializer(serializers.ModelSerializer):
 
 class HerdSerializer(serializers.ModelSerializer):
     """Herd Serializer."""
-    animals = AnimalSerializer(many=True, source='animal_ser', read_only=True)
+    animals = AnimalSerializer(many=True, source='animal_set', read_only=True)
 
     class Meta:
         model = Herd
