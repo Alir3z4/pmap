@@ -2,6 +2,8 @@ import copy
 from django.core.exceptions import ValidationError
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from api.serializers import AnimalSerializer, AnimalWeightSerializer, HerdSerializer
@@ -12,6 +14,14 @@ class HerdViewSet(viewsets.ModelViewSet):
     """Herd View Set."""
     serializer_class = HerdSerializer
     queryset = Herd.objects.filter()
+
+    @action(detail=True, methods=['post'], url_path='delete-animal')
+    def delete_animal(self, request: Request, *args, **kwargs) -> Response:
+        """Remove an Animal from the Herd."""
+        animal: Animal = get_object_or_404(self.get_object().animal_set.filter(), id=request.data['animal_id'])
+        animal.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AnimalViewSet(viewsets.ModelViewSet):

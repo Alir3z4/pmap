@@ -56,7 +56,7 @@ class TestAPIViews(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Herd.objects.filter().count(), 1)
 
-    def test_her_list(self) -> None:
+    def test_herd_list(self) -> None:
         herd: Herd = Herd.objects.create(name='meat lovers')
         herd.animal_set.create(id=2)
 
@@ -66,3 +66,17 @@ class TestAPIViews(APITestCase):
         self.assertIsInstance(resp.data, list)
         self.assertEqual(len(resp.data), 1)
         self.assertEqual(resp.data[0], HerdSerializer(instance=herd).data)
+
+    def test_delete_animal_from_herd(self) -> None:
+        herd: Herd = Herd.objects.create(name='meat lovers')
+        herd.animal_set.create(id=1)
+        herd.animal_set.create(id=2)
+
+        resp: Response = self.client.post(
+            path=reverse('api:herd-delete-animal', args=[herd.id]),
+            data={'animal_id': 1}
+        )
+
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(herd.animal_set.filter().count(), 1)
+        self.assertEqual(herd.animal_set.first().id, 2)
