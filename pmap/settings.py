@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
     'rest_framework',
-    'livestock',
-    'api',
+    'livestock.apps.LivestockConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
