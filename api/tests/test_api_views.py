@@ -3,6 +3,7 @@ from datetime import datetime
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
+from rest_framework.exceptions import ErrorDetail
 from rest_framework.response import Response
 from rest_framework.test import APITestCase
 
@@ -50,6 +51,15 @@ class TestAPIViews(APITestCase):
             resp.data,
             {'id': 1, 'weight': 50.0, 'weight_date': f'{today.isoformat()}Z', 'animal': animal.id}
         )
+
+        # Testing bad data for weights
+        resp: Response = self.client.post(
+            path=reverse('api:animal-add-weight', args=[animal.id, ]),
+            data={'weight': 50}
+        )
+
+        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(resp.data, {'weight_date': [ErrorDetail(string='This field is required.', code='required')]})
 
     def test_animal_list(self) -> None:
         today = timezone.now()
