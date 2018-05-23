@@ -35,7 +35,7 @@ class BatchCreateMixin:
         return super(BatchCreateMixin, self).create(request, *args, **kwargs)
 
 
-class HerdViewSet(viewsets.ModelViewSet):
+class HerdViewSet(BatchCreateMixin, viewsets.ModelViewSet):
     """Herd View Set."""
     serializer_class = HerdSerializer
     queryset = Herd.objects.filter()

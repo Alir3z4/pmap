@@ -91,6 +91,20 @@ class TestAPIViews(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Herd.objects.filter().count(), 1)
 
+    def test_batch_herd_addition(self) -> None:
+        resp: Response = self.client.post(
+            path=reverse('api:herd-list'),
+            data={'batch': [{'name': 'meat lovers'}, {'name': 'grass lovers'}]},
+            format='json'
+        )
+
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Herd.objects.filter().count(), 2)
+        self.assertEqual(
+            resp.data,
+            [{'id': 1, 'name': 'meat lovers', 'animals': []}, {'id': 2, 'name': 'grass lovers', 'animals': []}]
+        )
+
     def test_herd_list(self) -> None:
         herd: Herd = Herd.objects.create(name='meat lovers')
         herd.animal_set.create(id=2)
