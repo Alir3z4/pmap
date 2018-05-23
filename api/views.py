@@ -1,3 +1,6 @@
+from collections import OrderedDict
+from typing import List
+
 import copy
 from django.core.exceptions import ValidationError
 from rest_framework import viewsets, status
@@ -8,6 +11,28 @@ from rest_framework.response import Response
 
 from api.serializers import AnimalSerializer, AnimalWeightSerializer, HerdSerializer
 from livestock.models import Animal, Herd
+
+
+class BatchCreateMixin:
+    """Mixin to add Batch creation."""
+    def batch_create(self, batch_data: List[OrderedDict]) -> Response:
+        """Batch create of Animals."""
+        created_data = []
+
+        for data in batch_data:
+            serializer = self.get_serializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+
+            created_data.append(serializer.data)
+
+        return Response(created_data, status=status.HTTP_201_CREATED)
+
+    def create(self, request, *args, **kwargs):
+        if 'batch' in request.data and isinstance(request.data['batch'], list):
+            return self.batch_create(request.data['batch'])
+
+        return super(BatchCreateMixin, self).create(request, *args, **kwargs)
 
 
 class HerdViewSet(viewsets.ModelViewSet):
@@ -24,7 +49,7 @@ class HerdViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class AnimalViewSet(viewsets.ModelViewSet):
+class AnimalViewSet(BatchCreateMixin, viewsets.ModelViewSet):
     """Animal View Set."""
     serializer_class = AnimalSerializer
     queryset = Animal.objects.filter()

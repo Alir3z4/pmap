@@ -19,6 +19,21 @@ class TestAPIViews(APITestCase):
         self.assertEqual(Animal.objects.filter().count(), 1)
         self.assertEqual(Animal.objects.first().id, 100)
 
+    def test_batch_animal_addition(self) -> None:
+        herd: Herd = Herd.objects.create(name='meat lovers')
+
+        resp: Response = self.client.post(
+            path=reverse('api:animal-list'),
+            data={'batch': [{'id': 100}, {'id': 200, 'herd': herd.id}]},
+            format='json'
+        )
+
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            resp.data,
+            [{'id': 100, 'weights': [], 'herd': None}, {'id': 200, 'weights': [], 'herd': herd.id}]
+        )
+
     def test_animal_weight_record(self) -> None:
         animal: Animal = Animal.objects.create(id=100)
         today = datetime.now()
