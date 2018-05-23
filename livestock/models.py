@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Herd(models.Model):
-    """Herd"""
+    """Herd model."""
     name = models.CharField(verbose_name=_('herd'), max_length=150)
 
     class Meta:

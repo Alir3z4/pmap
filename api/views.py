@@ -4,8 +4,14 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from api.serializers import AnimalSerializer, AnimalWeightSerializer
+from api.serializers import AnimalSerializer, AnimalWeightSerializer, HerdSerializer
 from livestock.models import Animal
+
+
+class HerdViewSet(viewsets.ModelViewSet):
+    """Herd View Set."""
+    serializer_class = HerdSerializer
+    queryset = Animal.objects.filter()
 
 
 class AnimalViewSet(viewsets.ModelViewSet):
