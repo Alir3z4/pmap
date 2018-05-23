@@ -27,6 +27,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG', '')
 ALLOWED_HOSTS = [
     '192.168.56.1',
     'alireza-pmap.herokuapp.com',
+    'alireza-pmap-staging.herokuapp.com',
     '127.0.0.1',
 ]
 
