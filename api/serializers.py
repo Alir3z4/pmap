@@ -18,7 +18,7 @@ class AnimalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Animal
-        fields: Tuple[str] = ('id', 'weights', )
+        fields: Tuple[str] = ('id', 'weights', 'herd', )
 
 
 class HerdSerializer(serializers.ModelSerializer):

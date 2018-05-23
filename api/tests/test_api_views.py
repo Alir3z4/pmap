@@ -50,6 +50,26 @@ class TestAPIViews(APITestCase):
         self.assertEqual(len(resp.data), 1)
         self.assertEqual(resp.data[0], AnimalSerializer(instance=animal).data)
 
+    def test_edit_animal(self) -> None:
+        animal: Animal = Animal.objects.create(id=100)
+
+        resp: Response = self.client.put(
+            path=reverse('api:animal-detail', args=[animal.id]),
+            data={'id': 400}
+        )
+
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(resp.data, {'id': 400, 'weights': [], 'herd': None})
+
+        animal.refresh_from_db()
+        herd: Herd = Herd.objects.create(name='meat lovers')
+        resp: Response = self.client.put(
+            path=reverse('api:animal-detail', args=[animal.id]),
+            data={'herd': herd.id, 'id': animal.id}
+        )
+
+        self.assertEqual(resp.data, {'id': animal.id, 'weights': [], 'herd': herd.id})
+
     def test_add_herd(self) -> None:
         resp: Response = self.client.post(path=reverse('api:herd-list'), data={'name': 'meat lovers'})
 
