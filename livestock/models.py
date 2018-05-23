@@ -2,9 +2,22 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
+class Herd(models.Model):
+    """Herd"""
+    name = models.CharField(verbose_name=_('herd'), max_length=150)
+
+    class Meta:
+        verbose_name = _('Herd')
+        verbose_name_plural = _('Herds')
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class Animal(models.Model):
     """Animal model."""
     id = models.IntegerField(primary_key=True, verbose_name=_('id'))
+    herd = models.ForeignKey(Herd, blank=True, null=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = _('Animal')
