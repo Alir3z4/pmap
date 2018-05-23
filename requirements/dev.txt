@@ -3,3 +3,4 @@
 coverage==4.4.2
 ipdb==0.11
 flake8==3.5.0
+Fabric3==1.14.post1

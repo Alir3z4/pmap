@@ -18,12 +18,12 @@ class AnimalViewSet(viewsets.ModelViewSet):
         """Add weight record for an animal."""
         data = copy.deepcopy(request.data)
         data['animal'] = self.get_object().id
-        
+
         serializer = AnimalWeightSerializer(data=data)
-        
+
         if not serializer.is_valid():
             raise ValidationError(serializer.errors)
-        
+
         serializer.save()
 
         return Response(

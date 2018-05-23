@@ -52,3 +52,4 @@ coverage_html/
 media_test/
 .translations/
 staticfiles/
+htmlcov/

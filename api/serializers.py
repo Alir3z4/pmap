@@ -13,7 +13,7 @@ class AnimalWeightSerializer(serializers.ModelSerializer):
 
 class AnimalSerializer(serializers.ModelSerializer):
     weights = AnimalWeightSerializer(many=True, read_only=True)
-    
+
     class Meta:
         model = Animal
         fields: Tuple[str] = ('id', 'weights', )
