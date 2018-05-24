@@ -9,7 +9,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from api.serializers import AnimalSerializer, AnimalWeightSerializer, HerdSerializer
+from api.serializers import AnimalSerializer, AnimalWeightSerializer, HerdSerializer, EstimatedWeightSerializer
 from livestock.models import Animal, Herd
 
 
@@ -62,9 +62,7 @@ class AnimalViewSet(BatchCreateMixin, viewsets.ModelViewSet):
         data['animal'] = self.get_object().id
 
         serializer = AnimalWeightSerializer(data=data)
-
-        if not serializer.is_valid():
-            raise ValidationError(serializer.errors)
+        serializer.is_valid(raise_exception=True)
 
         serializer.save()
 
@@ -72,3 +70,12 @@ class AnimalViewSet(BatchCreateMixin, viewsets.ModelViewSet):
             data=AnimalWeightSerializer(instance=serializer.instance).data,
             status=status.HTTP_201_CREATED
         )
+
+    @action(detail=False, methods=['get'], serializer_class=EstimatedWeightSerializer, url_path='estimated_weight')
+    def estimated_weight(self, request: Request, *args, **kwargs) -> Response:
+        """Return estimated weight of animals for the a given date."""
+        serializer = EstimatedWeightSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)

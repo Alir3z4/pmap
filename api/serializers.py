@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Union, Dict
 
 from rest_framework import serializers
 
@@ -28,3 +28,13 @@ class HerdSerializer(serializers.ModelSerializer):
     class Meta:
         model = Herd
         fields: Tuple[str] = ('id', 'name', 'animals', )
+
+
+class EstimatedWeightSerializer(serializers.Serializer):
+    """Estimated Weight Serializer."""
+    num_animals = serializers.IntegerField(read_only=True)
+    estimated_total_weight = serializers.FloatField(read_only=True)
+    date = serializers.DateTimeField(write_only=True, required=True)
+
+    def create(self, validated_data) -> Dict[str, Union[int, float]]:
+        return Animal.objects.estimated_weight(validated_data['date'])

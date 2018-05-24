@@ -26,6 +26,10 @@ class AnimalManager(models.Manager):
         estimated_weights: List[float] = []
         for animal in self.all():
             weight_records = animal.weights.filter().values_list('weight_date', 'weight')
+
+            if not weight_records:
+                continue
+
             estimated_weight: float = linear_interpolation_datetime(weight_records, weight_date)
             estimated_weights.append(estimated_weight)
 

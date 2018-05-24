@@ -139,3 +139,32 @@ class TestAPIViews(APITestCase):
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(herd.animal_set.filter().count(), 1)
         self.assertEqual(herd.animal_set.first().id, 2)
+
+    def test_animals_estimated_weight(self) -> None:
+        animal: Animal = Animal.objects.create(id=100)
+        animal.weights.create(weight=101, weight_date=datetime(2018, 5, 1).astimezone(tz=timezone.utc))
+        animal.weights.create(weight=105, weight_date=datetime(2018, 5, 5).astimezone(tz=timezone.utc))
+
+        resp: Response = self.client.get(
+            path=reverse('api:animal-estimated-weight'),
+            data={'date': '2018-05-03T12:00:00Z'}
+        )
+
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(resp.data, {'num_animals': 1, 'estimated_total_weight': 103.5})
+
+        # Having more animals
+        Animal.objects.create(id=550)
+        animal: Animal = Animal.objects.create(id=300)
+        animal.weights.create(weight=101, weight_date=datetime(2018, 5, 1).astimezone(tz=timezone.utc))
+        animal.weights.create(weight=102, weight_date=datetime(2018, 5, 2).astimezone(tz=timezone.utc))
+        animal.weights.create(weight=104, weight_date=datetime(2018, 5, 4).astimezone(tz=timezone.utc))
+        animal.weights.create(weight=105, weight_date=datetime(2018, 5, 5).astimezone(tz=timezone.utc))
+
+        resp: Response = self.client.get(
+            path=reverse('api:animal-estimated-weight'),
+            data={'date': '2018-05-03T12:00:00Z'}
+        )
+
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(resp.data, {'num_animals': 3, 'estimated_total_weight': 207.0})
