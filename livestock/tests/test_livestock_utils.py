@@ -43,9 +43,14 @@ class TestLivestockUtils(SimpleTestCase):
 
         self.assertEqual(linear_interpolation(points, x=3), 103.0)
 
-        points: List[Tuple[int, int]] = [(1, 108), (2, 107), (4, 114), (5, 90), (6, 95), (7, 115), ]
+        points: List[Tuple[int, int]] = [(2, 108), (3, 107), (5, 105), (6, 104), (7, 103), (8, 102), ]
 
-        self.assertEqual(linear_interpolation(points, x=3), 93.9)
-        self.assertEqual(linear_interpolation(points, x=8), 97.4)
-        self.assertEqual(linear_interpolation(points, x=15), 102.3)
-        self.assertEqual(linear_interpolation(points, x=28), 111.4)
+        self.assertEqual(linear_interpolation(points, x=1), 109.0)
+        self.assertEqual(linear_interpolation(points, x=4), 106.0)
+        self.assertEqual(linear_interpolation(points, x=9), 101.0)
+        self.assertEqual(linear_interpolation(points, x=16), 94.0)
+        self.assertEqual(linear_interpolation(points, x=29), 81.0)
+
+        points: List[Tuple[int, int]] = [(1, 101), (5, 105), ]
+
+        self.assertEqual(linear_interpolation(points, x=7), 107.0)
