@@ -1,9 +1,7 @@
 """Livestock utils package."""
 from collections import OrderedDict
 from datetime import datetime
-from typing import Tuple, Union, List, Dict, Iterable
-
-from random import shuffle
+from typing import Tuple, Union, List, Iterable
 
 Number = Union[int, float]
 
